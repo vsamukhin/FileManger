@@ -1,0 +1,22 @@
+.folder-name{
+  font-size: 25px;
+  color: var(--grey);
+  margin: 10px 0;
+}
+
+.empty-message {
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  text-align: center;
+  color: var(--grey);
+  margin: 20px 0;
+}
+
+.link-back {
+  text-decoration: none;
+  color: var(--grey);
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px 0;
+}

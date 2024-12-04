@@ -1,0 +1,31 @@
+.header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--blue);
+}
+
+.header-logo-wrap{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.logo-image {
+  width: 30px;
+  height: 30px;
+}
+
+.logo {
+  margin-left: 10px;
+  font-size: 28px;
+  color: var(--light-blue);
+}
+
+.header-button-wrap {
+  margin-left: 20px;
+  display: flex;
+  gap: 20px;
+}

@@ -1,0 +1,17 @@
+.form-select {
+  background-color: transparent;
+  padding: 5px 0;
+  border: none;
+  outline: none;
+  border-bottom: 1px solid var(--grey);
+  color: var(--black);
+  font-size: 17px;
+  margin: 10px 0;
+}
+
+.form-error {
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+  
+}
