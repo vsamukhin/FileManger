@@ -22,9 +22,7 @@ const Modal: React.FC<IProps> = ({ isOpen, onClose, title, children, width, heig
           <h3>{title}</h3>
           <button className="close-button" onClick={onClose}>x</button>
         </div>
-        <div
-          style={{ width, height }}
-        >
+        <div>
           {children}
         </div>
       </div>

@@ -1,7 +1,8 @@
 import { ChangeEvent, useState } from "react";
 import { useAppDispatch } from "../../../app/hooks";
+import { closeEditFolderModal } from "../../../app/slices/modalSlice";
 import { getFolders, updateFolder } from "../../../app/thunks/folderThunk";
-import { IEditName, IFolder } from "../../../types";
+import { IFolder, IUpdateFolderFields } from "../../../types";
 import Button from "../../UI/Button/Button";
 import Input from "../../UI/Input/Input";
 
@@ -10,7 +11,7 @@ interface IProps {
 }
 
 const UpdateFolderForm:React.FC<IProps> = ({folder}) => { 
- const [state, setState] = useState<IEditName>({
+ const [state, setState] = useState<IUpdateFolderFields>({
     name: folder.name,
   })
   const dispatch = useAppDispatch();
@@ -36,6 +37,7 @@ const UpdateFolderForm:React.FC<IProps> = ({folder}) => {
     try {
       await dispatch(updateFolder(data));
       await dispatch(getFolders());
+      dispatch(closeEditFolderModal())
     } catch (error) {
       alert(error);
     }
@@ -49,10 +51,10 @@ const UpdateFolderForm:React.FC<IProps> = ({folder}) => {
         required={true}
         type="text"
         name='name'
-        value={state.name}
+        value={state.name!}
       />
       <div>
-        <Button type="submit" text="Изменить" size="medium"/>
+        <Button type="submit" text="Изменить" size="md"/>
       </div>
     </form>
   )

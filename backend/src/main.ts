@@ -12,7 +12,6 @@ async function bootstrap() {
     prefix: '/upload/',
   });
 
-  app.useStaticAssets(path.join(__dirname, '../upload'));
   await app.listen(4200);
 }
 bootstrap();

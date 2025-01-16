@@ -1,27 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IFoelderWithFile, IFolder } from "../../types";
 import { RootState } from "../store";
-import { createFolder, getFolders, getOneFolder, removeFolder } from "../thunks/folderThunk";
+import { createFolder, getFavoritesFolder, getFolders, getOneFolder, removeFolder } from "../thunks/folderThunk";
 
 
 interface FolderState {
+  currentDir: null | string;
   folders: IFolder[],
+  favoritesFolders: IFolder[],
   folder: IFoelderWithFile |null,
   getFoldersLoading: boolean,
   getOneFolderLoading: boolean,
   createFolderLoading: boolean,
   showFolderModal: boolean,
   removeFolderLoading: boolean,
+  loadingFavoritesFolder: boolean,
 }
 
-const initialState:FolderState = {
+const initialState: FolderState = {
+  currentDir: null,
   folders: [],
+  favoritesFolders: [],
   folder: null,
   getFoldersLoading: false,
   getOneFolderLoading: false,
   createFolderLoading: false,
   showFolderModal: false,
   removeFolderLoading: false,
+  loadingFavoritesFolder: false,
 };
 
 export const folderSlice = createSlice({
@@ -30,6 +36,12 @@ export const folderSlice = createSlice({
   reducers: {
     showFormFolderModal: (state) => {
       state.showFolderModal = !state.showFolderModal;
+    },
+    setCurrentDir: (state, actions) => {
+      state.currentDir = actions.payload;
+    },
+    resetCurrentDir: (state) => {
+      state.currentDir = null;
     }
   },
   extraReducers: builder => {
@@ -82,10 +94,23 @@ export const folderSlice = createSlice({
     builder.addCase(removeFolder.rejected, (state) => { 
       state.removeFolderLoading = false;
     });
+
+    builder.addCase(getFavoritesFolder.pending, (state) => { 
+      state.loadingFavoritesFolder = true;
+    });
+
+    builder.addCase(getFavoritesFolder.fulfilled, (state, action) => { 
+      state.loadingFavoritesFolder = false;
+      state.favoritesFolders = action.payload;
+    });
+    
+    builder.addCase(getFavoritesFolder.rejected, (state) => { 
+      state.loadingFavoritesFolder = false;
+    });
   }
 });
 
-export const { showFormFolderModal } = folderSlice.actions;
+export const { showFormFolderModal, setCurrentDir, resetCurrentDir } = folderSlice.actions;
 export const folderReducers = folderSlice.reducer;
 export const selectFolders = (state: RootState) => state.folders.folders;
 export const foldersLoading = (state: RootState) => state.folders.getFoldersLoading;
@@ -93,3 +118,7 @@ export const selectFolder = (state: RootState) => state.folders.folder;
 export const oneFolderLoading = (state: RootState) => state.folders.getOneFolderLoading;
 export const showFolderModal = (state: RootState) => state.folders.showFolderModal;
 export const removeFolderLoading = (state: RootState) => state.folders.removeFolderLoading;
+export const currentDir = (state: RootState) => state.folders.currentDir;
+export const loadingFavoritesFolder = (state: RootState) => state.folders.loadingFavoritesFolder;
+export const selectFavoritesFolders = (state: RootState) => state.folders.favoritesFolders;
+

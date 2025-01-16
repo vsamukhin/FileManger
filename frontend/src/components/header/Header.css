@@ -1,9 +1,18 @@
 .header {
-  padding: 20px;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--blue);
+  border-bottom: 0.5px solid var(--light-blue);
+  position: relative;
+  z-index: 10;
+  background-color: var(--white);
+}
+
+.header-wrap{
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 .header-logo-wrap{
@@ -21,11 +30,36 @@
 .logo {
   margin-left: 10px;
   font-size: 28px;
-  color: var(--light-blue);
+  color: var(--black);
 }
 
 .header-button-wrap {
   margin-left: 20px;
   display: flex;
   gap: 20px;
+}
+
+.header-sidebar_btn {
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.header-sidebar_btn span {
+  margin-top: 5px;
+  width: 20px;
+  height: 2px;
+  background-color: var(--black);
+}
+
+.header-sidebar_btn span:nth-child(1) {
+  margin-top: 2px;
+}
+
+.header-sidebar_btn:hover {
+  border: 1px solid var(--blue);
+  border-radius: 8px;
 }

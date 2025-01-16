@@ -1,22 +1,26 @@
-.file {
-  max-width: 90px;
-  margin: 10px;
+ .file {
+  width: 100px;
+  margin: 5px;
+  height: max-content;
   padding: 5px;
-  color: var(--grey);
+  color: var(--black);
   text-decoration: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   cursor: pointer;
+  position: relative;
+}
+
+.file-favorites {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .file-img-wrap {
-  width: 100%;
-}
-
-.file-img {
-  width: 100%;
+  width: 60px;
 }
 
 .file-name {
@@ -25,7 +29,6 @@
   overflow: hidden;
   font-weight: 600;
   text-overflow: ellipsis;
-  padding: 5px;
 }
 
 .button-wrap {
@@ -39,4 +42,66 @@
 .file:hover .button-wrap{
   display: flex;
   gap: 5px;
+}
+
+.file-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.file-btn-icon {
+  width: 14px;
+}
+
+/* list */
+
+.list-file-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.list-file-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  overflow: hidden;
+}
+
+.list-file-name {
+  flex-grow: 1;
+  cursor: pointer;
+  color: #333;
+  font-weight: bold;
+}
+
+.list-file-name:hover {
+  text-decoration: underline;
+}
+
+.list-file-favorites {
+  margin-left: 70px;
+}
+
+.list-file-actions {
+  display: flex;
+  
+}
+
+.list-file-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.list-file-btn-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.list-file-btn:hover .list-file-btn-icon {
+  filter: brightness(0.8);
 }

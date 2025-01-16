@@ -7,10 +7,12 @@ import {
   Param,
   Patch,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 import * as path from 'path';
 import { FileDto } from './dto/file.dto';
 import { FileService } from './file.service';
@@ -22,6 +24,11 @@ export class FileController {
   @Get()
   async findAll() {
     return this.fileService.findAll();
+  }
+
+  @Get('/favorites')
+  async getFavoritesFile() {
+    return this.fileService.getFavorites();
   }
 
   @Get(':id')
@@ -53,5 +60,10 @@ export class FileController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: FileDto) {
     return this.fileService.update(id, dto);
+  }
+
+  @Get('/download/:id')
+  async download(@Param('id') id: string, @Res() res: Response) {
+    return this.fileService.downloadFile(id, res);
   }
 }

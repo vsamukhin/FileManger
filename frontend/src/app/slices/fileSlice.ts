@@ -1,30 +1,38 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IFile } from "../../types";
 import { RootState } from "../store";
-import { createFile, getFiles, getOneFile, removeFile, updateFile } from "../thunks/fileThunk";
+import { createFile, getFavoritesFiles, getFiles, getOneFile, removeFile, updateFile } from "../thunks/fileThunk";
 
 interface FilesState {
   files: IFile[],
+  favoritesFile: IFile[],
   file: IFile | null,
   getOneFileLoading: boolean,
   getFilesLoading: boolean,
   createFileLoading: boolean,
+  showSidebar: boolean,
   showCreateFileModal: boolean,
   removeFileLoading: boolean,
   updateFileLoading: boolean,
+  loadingFavoritesFile: boolean,
   error: string | null,
+  fileView: string;
 }
 
 const initialState: FilesState = {
   files: [],
+  favoritesFile: [],
   file: null,
   getOneFileLoading: false,
   getFilesLoading: false,
   createFileLoading: false,
+  showSidebar: true,
   showCreateFileModal: false,
   removeFileLoading: false,
   updateFileLoading: false,
+  loadingFavoritesFile: false,
   error: null,
+  fileView: 'plate',
 }
 
 const filesSlice = createSlice({
@@ -36,7 +44,13 @@ const filesSlice = createSlice({
     },
     resetErrors: (state) => {
       state.error = null;
-    } 
+    },
+    showSidebarMenu: (state) => {
+      state.showSidebar = !state.showSidebar;
+    }, 
+    setFileView: (state, action) => {
+      state.fileView = action.payload;
+    }
   },
   extraReducers: builder => {
     builder.addCase(getFiles.pending, (state) => {
@@ -102,10 +116,23 @@ const filesSlice = createSlice({
       state.updateFileLoading = false;
       state.error = action.payload as string;
     });
+
+    builder.addCase(getFavoritesFiles.pending, (state) => { 
+      state.loadingFavoritesFile = true;
+    });
+
+    builder.addCase(getFavoritesFiles.fulfilled, (state, action) => { 
+      state.loadingFavoritesFile = false;
+      state.favoritesFile = action.payload;
+    });
+
+    builder.addCase(getFavoritesFiles.rejected, (state) => { 
+      state.loadingFavoritesFile = false;
+    });
   }
 });
 
-export const { showFormFileModal, resetErrors } = filesSlice.actions;
+export const { showFormFileModal, resetErrors, showSidebarMenu, setFileView } = filesSlice.actions;
 export const filesReducers = filesSlice.reducer;
 export const selectFiles = (state: RootState) => state.files.files;
 export const getFilesLoading = (state: RootState) => state.files.getFilesLoading;
@@ -115,3 +142,7 @@ export const createFileLoading = (state: RootState) => state.files.createFileLoa
 export const showCreateFileModal = (state: RootState) => state.files.showCreateFileModal;
 export const removeFileLoading = (state: RootState) => state.files.removeFileLoading;
 export const selectError = (state: RootState) => state.files.error;
+export const showSidebar = (state: RootState) => state.files.showSidebar;
+export const fileView = (state: RootState) => state.files.fileView;
+export const loadingFavoritesFile = (state: RootState) => state.files.loadingFavoritesFile;
+export const selectFavoritesFiles = (state: RootState) => state.files.favoritesFile;

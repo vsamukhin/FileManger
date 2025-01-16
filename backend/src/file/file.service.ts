@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Res } from '@nestjs/common';
+import { Response } from 'express';
 import * as fs from 'fs';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateFileDto } from './dto/file-update.dto';
@@ -10,6 +11,10 @@ export class FileService {
 
   async findAll() {
     return await this.prisma.file.findMany({ where: { folderId: null } });
+  }
+
+  async getFavorites() {
+    return await this.prisma.file.findMany({ where: { favorites: true } });
   }
 
   async findOne(id: string) {
@@ -61,14 +66,30 @@ export class FileService {
   }
 
   async update(id: string, dto: UpdateFileDto) {
-    const checkFile = await this.prisma.file.findUnique({
-      where: { name: dto.name },
-    });
+    if (dto.name) {
+      const checkFile = await this.prisma.file.findUnique({
+        where: { name: dto.name },
+      });
 
-    if (checkFile) {
-      throw new BadRequestException('Файл с таким названием уже существует!');
+      if (checkFile) {
+        throw new BadRequestException('Файл с таким названием уже существует!');
+      }
     }
 
     return this.prisma.file.update({ where: { id }, data: dto });
+  }
+
+  async downloadFile(id: string, @Res() res: Response) {
+    const file = await this.prisma.file.findUnique({ where: { id: id } });
+
+    if (!fs.existsSync(file.path)) {
+      throw new BadRequestException('Файл не найден');
+    }
+
+    return res.download(file.path, file.name, (err) => {
+      if (err) {
+        throw new BadRequestException('Ошибка скачивания файла');
+      }
+    });
   }
 }

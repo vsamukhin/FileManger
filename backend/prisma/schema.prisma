@@ -8,17 +8,22 @@ datasource db {
 }
 
 
-
 model Folder {
   id String @id @default(cuid())
 
   createdAT DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-
   name String
 
+  parentId String?
+
+  parent     Folder?  @relation("FolderToSubfolders", fields: [parentId], references: [id])
+  subfolders Folder[] @relation("FolderToSubfolders")
+
   files File[]
+  
+  favorites Boolean @default(false)
 
   @@map("folder")
 }
@@ -37,6 +42,8 @@ model File {
 
   folder Folder? @relation(fields: [folderId], references: [id]) 
   folderId String? @map("folder_id")
+
+  favorites Boolean @default(false)
 
   @@map("file")
 }

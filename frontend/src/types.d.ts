@@ -4,6 +4,8 @@ export interface IFolder {
   createdAT: string;
   updatedAt: string;
   name: string;
+  parentId: string | null;
+  favorites: boolean;
 }
 
 export interface IFile {
@@ -14,24 +16,44 @@ export interface IFile {
   path: string;
   folderId: string | null;
   extension: string;
+  favorites: boolean;
 }
 
 export interface IFoelderWithFile extends IFolder {
   files: IFile[];
+  subfolders: IFoleder[];
 }
 
 export interface ICreateFolder {
   name: string;
+  parentId: string | null;
 }
 
 export interface ICreateFile {
   name: string;
-  folderId: string;
+  folderId: string | null;
   file: File | null;
 }
-
-export type ICreateFileMutation = Omit<ICreateFile, 'folderId'> & {
-  folderId: string | null;
-}
   
-export interface IEditName { name: string };
+export interface IUpdateFileFields{
+  name?: string
+  folderId?: string;
+  favorites?: boolean;
+};
+
+export interface IUpdateFolderFields{
+  name?: string
+  parentId?: string;
+  favorites?: boolean;
+};
+
+
+interface IUpdateFolder {
+  id: string,
+  data: IUpdateFolderFields,
+}
+
+export interface IUpdateFile {
+  id: string,
+  data: IUpdateFileFields,
+}

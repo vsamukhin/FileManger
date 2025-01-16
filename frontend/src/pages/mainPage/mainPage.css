@@ -1,11 +1,13 @@
-
-
+.all-file-wrap {
+  display: flex;
+}
 
 .empty-message {
   display: block;
   width: 100%;
   font-size: 14px;
   text-align: center;
-  color: var(--grey);
+  color: var(--black);
   margin: 20px 0;
 }
+

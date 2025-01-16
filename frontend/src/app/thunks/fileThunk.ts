@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosApi from "../../axiosApi";
-import { ICreateFileMutation, IEditName, IFile } from "../../types";
+import { ICreateFile, IFile, IUpdateFile } from "../../types";
 
 export const getFiles = createAsyncThunk(
   'files/getFiles',
@@ -18,12 +18,12 @@ export const getOneFile = createAsyncThunk<IFile, string>(
   }
 );
 
-export const createFile = createAsyncThunk<void, ICreateFileMutation>(
+export const createFile = createAsyncThunk<void, ICreateFile>(
   'files/createFile',
   async (file, {rejectWithValue}) => {
     const formData = new FormData();
 
-    const keys = Object.keys(file) as (keyof ICreateFileMutation)[];
+    const keys = Object.keys(file) as (keyof ICreateFile)[];
 
     keys.forEach((key) => {
       const value = file[key];
@@ -51,11 +51,6 @@ export const removeFile = createAsyncThunk(
   }
 );
 
-interface IUpdateFile {
-  id: string,
-  data: IEditName,
-}
-
 export const updateFile = createAsyncThunk<void, IUpdateFile>(
   'files/updateFile',
   async (file, {rejectWithValue}) => {
@@ -68,5 +63,30 @@ export const updateFile = createAsyncThunk<void, IUpdateFile>(
       const errorMessage = error.response?.data?.message || error.message || 'Ошибка сервера';
       return rejectWithValue(errorMessage)
     }
+  }
+);
+
+export const downloadFile = createAsyncThunk(
+  'files/download',
+  async ({id, filename }:{ id: string, filename: string } ) => {
+    const response = await axiosApi.get(`/file/download/${id}`, {
+    responseType: 'blob',
+  });
+    
+  const blob = new Blob([response.data]);
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = filename; // Установка имени файла
+  link.click();
+
+  link.remove();
+  }
+);
+
+export const getFavoritesFiles = createAsyncThunk(
+  'files/favorites',
+  async () => {
+    const response = await axiosApi.get<IFile[]>('/file/favorites');
+    return response.data;
   }
 );

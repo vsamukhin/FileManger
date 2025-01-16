@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { FileService } from 'src/file/file.service';
 import { PrismaService } from 'src/prisma.service';
 import { FolderDto } from './dto/folder.dto';
+import { UpdateFolderDto } from './dto/update-folder.dto';
 
 @Injectable()
 export class FolderService {
@@ -14,7 +15,7 @@ export class FolderService {
   }
 
   async findAll() {
-    return await this.prisma.folder.findMany();
+    return await this.prisma.folder.findMany({ where: { parentId: null } });
   }
 
   async findOne(id: string) {
@@ -28,11 +29,15 @@ export class FolderService {
 
     return await this.prisma.folder.findUnique({
       where: { id },
-      include: { files: true },
+      include: { files: true, subfolders: true },
     });
   }
 
-  async update(id: string, dto: FolderDto) {
+  async getFavorites() {
+    return await this.prisma.folder.findMany({ where: { favorites: true } });
+  }
+
+  async update(id: string, dto: UpdateFolderDto) {
     return await this.prisma.folder.update({ where: { id }, data: dto });
   }
 

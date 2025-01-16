@@ -1,10 +1,10 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { resetErrors, selectError, showFormFileModal } from "../../../app/slices/fileSlice";
-import { selectFolders } from "../../../app/slices/folderSlice";
+import { currentDir } from "../../../app/slices/folderSlice";
 import { createFile, getFiles } from "../../../app/thunks/fileThunk";
-import { getFolders, getOneFolder } from "../../../app/thunks/folderThunk";
-import { ICreateFile, ICreateFileMutation } from "../../../types";
+import { getOneFolder } from "../../../app/thunks/folderThunk";
+import { ICreateFile } from "../../../types";
 import Button from "../../UI/Button/Button";
 import FileInput from "../../UI/FileInput/FileInput";
 import Input from "../../UI/Input/Input";
@@ -12,18 +12,16 @@ import './FileForm.css';
 
 
 const FileForm = () => {
-  const [state, setState] = useState<ICreateFile>({
+  const currentFolder = useAppSelector(currentDir);
+  const initialState = {
     name: '',
-    folderId: '',
+    folderId: currentFolder ? currentFolder : null,
     file: null
-  });
-  const dispatch = useAppDispatch();
-  const folders = useAppSelector(selectFolders);
-  const error = useAppSelector(selectError);
+  }
 
-  useEffect(() => {
-    dispatch(getFolders());
-  }, [dispatch])
+  const [state, setState] = useState<ICreateFile>(initialState);
+  const dispatch = useAppDispatch();
+  const error = useAppSelector(selectError);
   
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -50,16 +48,11 @@ const FileForm = () => {
     e.preventDefault();
     dispatch(resetErrors());
 
-    const data: ICreateFileMutation = {
-      ...state,
-      folderId: state.folderId?.trim() === '' ? null : state.folderId ,
-    };    
-
     try {
-      await dispatch(createFile(data)).unwrap();
+      await dispatch(createFile(state)).unwrap();
       await dispatch(getFiles());
-      if (data.folderId) {
-        dispatch(getOneFolder(data.folderId));
+      if (state.folderId) {
+        dispatch(getOneFolder(state.folderId));
       }
 
       dispatch(showFormFileModal());
@@ -81,27 +74,6 @@ const FileForm = () => {
           onChange={handleChange}
         />
         <div>
-          {
-            !folders.length ? null :
-            <select
-                className="form-select"
-                value={state.folderId}
-                onChange={handleChange}
-                name="folderId"
-              >
-              <option value="" defaultValue="">Выберите папку</option>
-                {folders.map((folder) => (
-                  <option
-                    key={folder.id}
-                    value={folder.id}
-                  >
-                    {folder.name}
-                  </option>
-                ))}
-            </select>   
-          }
-        </div>
-        <div>
           <FileInput
             OnChange={filesInputHandleChange}
             label="Файл"
@@ -109,7 +81,7 @@ const FileForm = () => {
           />
         </div>
         <div>
-          <Button text="Создать файл" type='submit' size="medium" />
+          <Button text="Создать файл" type='submit' size="md" />
         </div>
       </form>
     </div>

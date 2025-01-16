@@ -19,6 +19,11 @@ export class FolderController {
     return this.folderService.create(dto);
   }
 
+  @Get('/favorites')
+  async getFavoritesFolder() {
+    return this.folderService.getFavorites();
+  }
+
   @Get()
   async findAll() {
     return this.folderService.findAll();

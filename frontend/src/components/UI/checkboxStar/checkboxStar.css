@@ -1,0 +1,27 @@
+.checkbox-star {
+  display: inline-block;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  position: relative;
+}
+
+.checkbox-star .inpet-checkbox {
+  display: none; 
+}
+
+.checkbox-star .checkbox-icon {
+  display: inline-block;
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.checkbox-star .checkbox-icon::before {
+  content: "☆";
+  color: #999;
+}
+
+.checkbox-star .inpet-checkbox:checked + .checkbox-icon::before {
+  content: "★";
+  color: #f5c518;
+}

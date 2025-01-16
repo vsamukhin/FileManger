@@ -1,0 +1,13 @@
+.favorites {
+  padding: 10px;
+}
+
+.favorites-title{
+  color: var(--dark-blue);
+}
+
+.favorites-empty-message {
+  display: inline-block;
+  margin: 20px 0;
+  text-align: center;
+}

@@ -1,22 +1,25 @@
 import { ChangeEvent, useState } from "react";
-import { useAppDispatch } from "../../../app/hooks";
-import { showFormFolderModal } from "../../../app/slices/folderSlice";
-import { createFolder, getFolders } from "../../../app/thunks/folderThunk";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { currentDir, showFormFolderModal } from "../../../app/slices/folderSlice";
+import { createFolder, getFolders, getOneFolder } from "../../../app/thunks/folderThunk";
 import { ICreateFolder } from "../../../types";
 import Button from "../../UI/Button/Button";
 import Input from "../../UI/Input/Input";
 
 const FolderForm = () => {
-  const [name, setName] = useState<ICreateFolder>({
+  const currentFolder = useAppSelector(currentDir);
+  const initialState = {
     name: '',
-  });
+    parentId: currentFolder ? currentFolder : null,
+  }
+
+  const [folder, setFolder] = useState<ICreateFolder>(initialState);
   const dispatch = useAppDispatch();
  
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setName(prev => ({
+    setFolder(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -26,13 +29,15 @@ const FolderForm = () => {
     e.preventDefault();
 
     try {
-      await dispatch(createFolder(name));
+      await dispatch(createFolder(folder));
       await dispatch(getFolders());
+      if (folder.parentId) {
+        await dispatch(getOneFolder(folder.parentId));
+      }
       await dispatch(showFormFolderModal());
     } catch (error) {
       alert('Invalid field');
       console.log(error);
-      
     }
   };
 
@@ -42,13 +47,13 @@ const FolderForm = () => {
         <Input
           type="text"
           name="name"
-          value={name.name}
+          value={folder.name}
           label="введите название папки"
           onChange={handleChange}
           required={true}
         />
         <div>
-          <Button text="Создать папку" type='submit' size="medium"></Button>
+          <Button text="Создать папку" type='submit' size="md"></Button>
         </div>
       </form>
     </div>

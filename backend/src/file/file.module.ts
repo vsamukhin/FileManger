@@ -11,9 +11,12 @@ import { FileService } from './file.service';
       storage: diskStorage({
         destination: './upload',
         filename: (req, file, cb) => {
-          const date = Date.now();
-          const filename = `${date}-${file.originalname}`;
-          cb(null, filename);
+          const originalName = Buffer.from(
+            file.originalname,
+            'latin1',
+          ).toString('utf8');
+          const uniqueName = `${Date.now()}-${originalName}`;
+          cb(null, uniqueName);
         },
       }),
     }),

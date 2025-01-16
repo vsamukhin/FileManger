@@ -51,7 +51,7 @@ const FileInput: React.FC<IProps> = ({ OnChange, name, label }) => {
         <div className='file-input-button-wrap'>
           <Button
             onClick={activateInput}
-            size='small'
+            size='s'
             type='button'
             text='Выберете файл'
           />

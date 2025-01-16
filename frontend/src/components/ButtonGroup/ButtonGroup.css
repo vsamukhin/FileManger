@@ -1,0 +1,25 @@
+.button-group-wrap {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn__list,
+.btn__plate {
+  height: 20px;
+  width: 20px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: no-repeat center center;
+  background-size: cover;
+}
+
+.btn__list {
+  background-image: url("../../assets/list.svg");
+}
+
+.btn__plate {
+  background-image: url("../../assets/plate.svg");
+}

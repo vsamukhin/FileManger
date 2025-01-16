@@ -1,9 +1,10 @@
 import { ChangeEvent, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { resetErrors, selectError } from "../../../app/slices/fileSlice";
+import { closeEditFileModal } from "../../../app/slices/modalSlice";
 import { getFiles, updateFile } from "../../../app/thunks/fileThunk";
 import { getOneFolder } from "../../../app/thunks/folderThunk";
-import { IEditName, IFile } from "../../../types";
+import { IFile, IUpdateFileFields } from "../../../types";
 import Button from "../../UI/Button/Button";
 import Input from "../../UI/Input/Input";
 
@@ -12,7 +13,7 @@ interface IProps {
 }
 
 const UpdateFileForm:React.FC<IProps> = ({file}) => { 
- const [state, setState] = useState<IEditName>({
+ const [state, setState] = useState<IUpdateFileFields>({
     name: file.name,
   })
   const dispatch = useAppDispatch();
@@ -44,7 +45,7 @@ const UpdateFileForm:React.FC<IProps> = ({file}) => {
         await dispatch(getOneFolder(file.folderId));
       }
       await dispatch(getFiles());
-
+      dispatch(closeEditFileModal());
     } catch (e) {
       console.error(e);
     }
@@ -59,10 +60,10 @@ const UpdateFileForm:React.FC<IProps> = ({file}) => {
         required={true}
         type="text"
         name='name'
-        value={state.name}
+        value={state.name!}
       />
       <div>
-        <Button type="submit" text="Изменить" size="medium"/>
+        <Button type="submit" text="Изменить" size="md"/>
       </div>
     </form>
   )

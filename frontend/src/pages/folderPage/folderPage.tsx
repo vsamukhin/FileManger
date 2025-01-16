@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { oneFolderLoading, selectFolder } from "../../app/slices/folderSlice";
+import { showFormFileModal } from "../../app/slices/fileSlice";
+import { oneFolderLoading, selectFolder, setCurrentDir, showFormFolderModal } from "../../app/slices/folderSlice";
 import { removeFile } from "../../app/thunks/fileThunk";
-import { getOneFolder } from "../../app/thunks/folderThunk";
-import File from '../../components/File/File';
-import GridList from "../../components/UI/FlexContainer/FlexContainer";
+import { getOneFolder, removeFolder } from "../../app/thunks/folderThunk";
+import ButtonGroup from "../../components/ButtonGroup/ButtonGroup";
+import FileList from "../../components/FileList/FileList";
 import Loader from "../../components/UI/Loader/loader";
 import './folderPage.css';
 
@@ -13,51 +14,68 @@ const FolderPage = () => {
   const { id } = useParams() as {id: string};
   const dispatch = useAppDispatch();
   const folderWithFiles = useAppSelector(selectFolder);
-  const loading = useAppSelector(oneFolderLoading)
-
+  const loading = useAppSelector(oneFolderLoading);
 
   useEffect(() => {
     dispatch(getOneFolder(id));
+    dispatch(setCurrentDir(id));
   }, [id, dispatch]);
 
-   const deleteFile = async(fileId:string) => {
+  const openModalCreateFolder = () => {
+    dispatch(showFormFolderModal())
+  };
+  
+  const openModalCreateFile = () => {
+    dispatch(showFormFileModal());
+  };
+  
+  if (loading) {
+    return <Loader />
+  }
+  
+  if (folderWithFiles?.subfolders.length === 0 && folderWithFiles.files.length === 0) {
+    return (
+      <>
+        <ButtonGroup
+          openModalCreateFile={openModalCreateFile}
+          openModalCreateFolder={openModalCreateFolder}
+        />
+        <span className="empty-message">Эта папка пуста</span>
+      </>
+    )
+  }
+
+  const deleteFolder = async(id:string) => {
+    if (confirm('Вы действительно хотите удалить папку?')) {
+      await dispatch(removeFolder(id));
+      await dispatch(getOneFolder(id));
+    }
+  };
+
+  const deleteFile = async(fileId:string) => {
     if (confirm('Вы действительно хотите удалить файл ?')) {
       await dispatch(removeFile(fileId));
       await dispatch(getOneFolder(id));
     } 
   };
 
-  if (!folderWithFiles?.files.length ) {
-    return (
-      <>
-        <div>
-          <Link to={'/'} className="link-back"><>&#8592;Назад</></Link>
-          <h3 className="folder-name">
-            название папки: {folderWithFiles?.name}
-          </h3> 
-        </div>
-        <span className="empty-message">Эта папка пуста</span>
-      </>
-    )
-  }
-
-
   return (
     <>
+      <ButtonGroup
+        openModalCreateFile={openModalCreateFile}
+        openModalCreateFolder={openModalCreateFolder}
+      />
       <div>
-        <Link to={'/'} className="link-back"><>&#8592;Назад</></Link>
-        <h3 className="folder-name">название папки: { folderWithFiles?.name }</h3> 
+        {
+          folderWithFiles?.files && folderWithFiles?.subfolders &&
+          <FileList
+            files={folderWithFiles?.files}
+            folders={folderWithFiles?.subfolders}
+            deleteFile={deleteFile}
+            deleteFolder={deleteFolder}
+          />
+        }
       </div>
-      {
-        loading ? <Loader /> :
-        <>
-          <GridList>
-            {folderWithFiles?.files.map((file) => (
-              <File key={file.id} file={file} remove={deleteFile}/>
-            ))}
-          </GridList>
-        </>
-      }
     </>
   )
 };

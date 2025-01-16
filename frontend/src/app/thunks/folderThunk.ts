@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axiosApi from "../../axiosApi";
-import { ICreateFolder, IEditName, IFoelderWithFile, IFolder } from "../../types";
+import { ICreateFolder, IFoelderWithFile, IFolder, IUpdateFolder } from "../../types";
 
 export const getFolders = createAsyncThunk(
   'folders/getAllFolders',
@@ -32,14 +32,23 @@ export const removeFolder = createAsyncThunk(
   }
 );
 
-interface IUpdateFolder {
-  id: string,
-  data: IEditName,
-}
-
 export const updateFolder = createAsyncThunk<void, IUpdateFolder>(
   'folders/updateFolder',
-  async (folder) => {
-    await axiosApi.patch(`/folder/${folder.id}`, folder.data);
+  async (folder, { rejectWithValue }) => {
+    try {
+      await axiosApi.patch(`/folder/${folder.id}`, folder.data);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error:any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Ошибка сервера';
+      return rejectWithValue(errorMessage)
+    }
+  }
+);
+
+export const getFavoritesFolder = createAsyncThunk(
+  'folders/favorites',
+  async () => {
+    const response = await axiosApi.get<IFolder[]>('folder/favorites');
+    return response.data;
   }
 );
